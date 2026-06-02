@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miser · 长沙外景约拍</title>
+<style>
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #0a0a0a;
+    color: #e8e8e8;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  /* ===== Scrollbar ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+  /* ===== Navigation ===== */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 5%; background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-logo { font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; color: #fff; }
+  .nav-logo em { font-style: normal; color: #c8a265; }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a {
+    font-size: 0.85rem; color: #aaa; transition: color 0.3s;
+    letter-spacing: 1px; position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: #c8a265; transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-toggle {
+    display: none; flex-direction: column; gap: 5px; cursor: pointer;
+    background: none; border: none; padding: 4px;
+  }
+  .nav-toggle span {
+    display: block; width: 24px; height: 2px;
+    background: #fff; border-radius: 2px; transition: 0.3s;
+  }
+  .nav-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.active span:nth-child(2) { opacity: 0; }
+  .nav-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ===== Hero ===== */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    padding: 120px 5% 80px; position: relative;
+    background: radial-gradient(ellipse at 50% 30%, #1a1510 0%, #0a0a0a 70%);
+  }
+  .hero-badge {
+    display: inline-block; border: 1px solid rgba(200,162,101,0.3);
+    color: #c8a265; font-size: 0.75rem; letter-spacing: 3px;
+    padding: 6px 18px; border-radius: 20px; margin-bottom: 32px;
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 300;
+    letter-spacing: 6px; color: #fff; margin-bottom: 16px;
+  }
+  .hero h1 strong { font-weight: 600; }
+  .hero p {
+    font-size: clamp(0.95rem, 2vw, 1.15rem); color: #888;
+    max-width: 520px; margin-bottom: 40px; letter-spacing: 1px;
+  }
+  .hero-gear {
+    display: flex; gap: 24px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 48px;
+  }
+  .hero-gear span {
+    font-size: 0.8rem; color: #666; letter-spacing: 1px;
+    border: 1px solid rgba(255,255,255,0.06); padding: 6px 16px; border-radius: 4px;
+  }
+  .hero-cta {
+    display: inline-block; background: #c8a265; color: #0a0a0a;
+    padding: 14px 44px; border-radius: 4px; font-size: 0.9rem;
+    font-weight: 600; letter-spacing: 2px; transition: 0.3s;
+    border: none; cursor: pointer;
+  }
+  .hero-cta:hover { background: #dbb878; transform: translateY(-2px); }
+  .hero-scroll {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: #555; font-size: 0.7rem; letter-spacing: 2px;
+    animation: bounce 2s infinite;
+  }
+  .hero-scroll span { display: block; width: 1px; height: 24px; background: #555; }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* ===== Section Common ===== */
+  .section { padding: 100px 5%; }
+  .section-title {
+    text-align: center; margin-bottom: 60px;
+  }
+  .section-title h2 {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 300;
+    letter-spacing: 4px; color: #fff; margin-bottom: 12px;
+  }
+  .section-title p {
+    color: #666; font-size: 0.85rem; letter-spacing: 2px;
+  }
+  .section-title .line {
+    width: 40px; height: 1px; background: #c8a265;
+    margin: 16px auto 0;
+  }
+
+  /* ===== Gallery ===== */
+  .gallery {
+    background: #0d0d0d;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px; max-width: 1200px; margin: 0 auto;
+  }
+  .gallery-item {
+    position: relative; overflow: hidden; border-radius: 4px;
+    aspect-ratio: 3 / 2; cursor: pointer;
+    background: #181818;
+  }
+  .gallery-item .placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
+    background: linear-gradient(135deg, #181818 0%, #222 100%);
+    color: #555; font-size: 0.8rem;
+    transition: 0.4s;
+  }
+  .gallery-item .placeholder .icon {
+    font-size: 2rem; opacity: 0.3;
+  }
+  .gallery-item:hover .placeholder {
+    background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+  }
+  .gallery-item .label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 12px; background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: #aaa; font-size: 0.75rem; letter-spacing: 1px;
+    opacity: 0; transition: 0.3s;
+  }
+  .gallery-item:hover .label { opacity: 1; }
+
+  /* ===== Packages ===== */
+  .packages { background: #0a0a0a; }
+  .packages-wrap {
+    display: flex; gap: 24px; justify-content: center;
+    flex-wrap: wrap; max-width: 900px; margin: 0 auto;
+  }
+  .package-card {
+    flex: 1; min-width: 280px; max-width: 420px;
+    background: #111; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: 40px 32px;
+    transition: 0.3s; position: relative;
+  }
+  .package-card:hover {
+    border-color: rgba(200,162,101,0.3);
+    transform: translateY(-4px);
+  }
+  .package-card.popular {
+    border-color: rgba(200,162,101,0.3);
+    background: linear-gradient(135deg, #15120e 0%, #111 100%);
+  }
+  .package-card.popular::before {
+    content: '推荐'; position: absolute; top: -1px; right: 32px;
+    background: #c8a265; color: #0a0a0a; font-size: 0.7rem;
+    letter-spacing: 1px; padding: 4px 14px; border-radius: 0 0 4px 4px;
+    font-weight: 600;
+  }
+  .package-card .name {
+    font-size: 1.1rem; color: #fff; letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .package-card .price {
+    font-size: 2.6rem; font-weight: 300; color: #c8a265;
+    margin-bottom: 4px;
+  }
+  .package-card .price small {
+    font-size: 0.9rem; color: #888;
+  }
+  .package-card .desc {
+    color: #666; font-size: 0.85rem; margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .package-card ul {
+    list-style: none; margin-bottom: 28px;
+  }
+  .package-card ul li {
+    padding: 8px 0; font-size: 0.85rem; color: #aaa;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .package-card ul li::before {
+    content: '✓'; color: #c8a265; font-weight: 700;
+  }
+  .package-card .highlight {
+    color: #c8a265; font-weight: 500;
+  }
+  .package-card .notice {
+    font-size: 0.75rem; color: #555; margin-top: 16px;
+    line-height: 1.8;
+  }
+  .package-card .btn-order {
+    width: 100%; padding: 12px; background: transparent;
+    border: 1px solid rgba(200,162,101,0.3); color: #c8a265;
+    border-radius: 4px; font-size: 0.85rem; letter-spacing: 2px;
+    cursor: pointer; transition: 0.3s;
+  }
+  .package-card .btn-order:hover {
+    background: #c8a265; color: #0a0a0a;
+  }
+
+  /* ===== Notes / Shooting Guide ===== */
+  .notes { background: #0d0d0d; }
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px; max-width: 900px; margin: 0 auto;
+  }
+  .notes-card {
+    background: #111; border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 6px; padding: 32px 24px; text-align: center;
+    transition: 0.3s;
+  }
+  .notes-card:hover { border-color: rgba(200,162,101,0.2); }
+  .notes-card .num {
+    font-size: 1.2rem; color: #c8a265; font-weight: 600;
+    margin-bottom: 8px; opacity: 0.5;
+  }
+  .notes-card h4 {
+    font-size: 0.9rem; color: #fff; letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .notes-card p {
+    font-size: 0.8rem; color: #666; line-height: 1.7;
+  }
+
+  /* ===== Footer ===== */
+  .footer {
+    text-align: center; padding: 40px 5%; border-top: 1px solid rgba(255,255,255,0.04);
+    color: #444; font-size: 0.75rem; letter-spacing: 1px;
+  }
+
+  /* ===== AI Chat Button ===== */
+  .chat-fab {
+    position: fixed; bottom: 28px; right: 28px; z-index: 200;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #c8a265; color: #0a0a0a; border: none;
+    font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 20px rgba(200,162,101,0.3);
+    transition: 0.3s; display: flex; align-items: center; justify-content: center;
+  }
+  .chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(200,162,101,0.4); }
+  .chat-fab .badge {
+    position: absolute; top: -2px; right: -2px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #e74c3c; color: #fff; font-size: 0.55rem;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+  /* ===== Chat Modal ===== */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+    display: none; align-items: flex-end; justify-content: center;
+    opacity: 0; transition: opacity 0.3s;
+    padding: 20px;
+  }
+  .modal-overlay.active { display: flex; opacity: 1; }
+  .modal {
+    width: 100%; max-width: 480px; max-height: 80vh;
+    background: #141414; border-radius: 12px 12px 0 0;
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex; flex-direction: column; overflow: hidden;
+    transform: translateY(20px); transition: transform 0.3s;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+  }
+  .modal-overlay.active .modal { transform: translateY(0); }
+  @media (min-width: 600px) {
+    .modal-overlay { align-items: center; }
+    .modal { border-radius: 12px; max-height: 640px; }
+  }
+
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .modal-header h3 {
+    font-size: 0.95rem; font-weight: 600; letter-spacing: 1px;
+    color: #fff;
+  }
+  .modal-header h3 small {
+    display: block; font-size: 0.6rem; color: #666;
+    font-weight: 400; letter-spacing: 0; margin-top: 2px;
+  }
+  .modal-close {
+    background: none; border: none; color: #555; font-size: 1.4rem;
+    cursor: pointer; padding: 4px 8px; border-radius: 4px;
+    transition: 0.2s;
+  }
+  .modal-close:hover { color: #fff; background: rgba(255,255,255,0.06); }
+
+  .modal-body {
+    flex: 1; overflow-y: auto; padding: 20px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  /* Messages */
+  .msg {
+    max-width: 85%; padding: 12px 16px;
+    border-radius: 12px; font-size: 0.85rem;
+    line-height: 1.6; animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.ai {
+    align-self: flex-start;
+    background: #1e1e1e; border: 1px solid rgba(255,255,255,0.06);
+    color: #ccc; border-bottom-left-radius: 4px;
+  }
+  .msg.ai .sender {
+    font-size: 0.65rem; color: #c8a265; letter-spacing: 1px;
+    margin-bottom: 4px; font-weight: 600;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: #c8a265; color: #0a0a0a;
+    border-bottom-right-radius: 4px;
+  }
+
+  .typing-dots {
+    display: inline-flex; gap: 4px; padding: 8px 0;
+  }
+  .typing-dots span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #666; animation: dotPulse 1.4s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dotPulse {
+    0%,60%,100% { transform: scale(1); opacity: 0.4; }
+    30% { transform: scale(1.3); opacity: 1; }
+  }
+
+  /* Form */
+  .booking-form {
+    background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: 16px; margin: 8px 0;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .booking-form .row {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .booking-form label {
+    font-size: 0.7rem; color: #888; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .booking-form input, .booking-form select {
+    background: #111; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px; padding: 10px 12px; color: #e8e8e8;
+    font-size: 0.85rem; outline: none; transition: 0.2s;
+    font-family: inherit;
+  }
+  .booking-form input:focus, .booking-form select:focus {
+    border-color: #c8a265;
+  }
+  .booking-form input::placeholder { color: #444; }
+  .booking-form select option { background: #111; color: #e8e8e8; }
+  .booking-form .submit-row {
+    display: flex; gap: 8px; margin-top: 4px;
+  }
+  .booking-form .submit-row button {
+    flex: 1; padding: 10px; border-radius: 4px;
+    font-size: 0.8rem; letter-spacing: 1px; cursor: pointer;
+    border: none; font-weight: 600; transition: 0.2s;
+  }
+  .booking-form .btn-confirm {
+    background: #c8a265; color: #0a0a0a;
+  }
+  .booking-form .btn-confirm:hover { background: #dbb878; }
+  .booking-form .btn-cancel {
+    background: transparent; border: 1px solid rgba(255,255,255,0.1);
+    color: #888;
+  }
+  .booking-form .btn-cancel:hover { border-color: #555; color: #fff; }
+
+  .modal-input-row {
+    display: flex; gap: 8px; padding: 12px 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: #111;
+  }
+  .modal-input-row input {
+    flex: 1; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px; padding: 10px 14px; color: #e8e8e8;
+    font-size: 0.85rem; outline: none; transition: 0.2s;
+    font-family: inherit;
+  }
+  .modal-input-row input:focus { border-color: #c8a265; }
+  .modal-input-row input::placeholder { color: #444; }
+  .modal-input-row button {
+    background: #c8a265; color: #0a0a0a; border: none;
+    border-radius: 6px; padding: 10px 18px; font-size: 0.85rem;
+    cursor: pointer; font-weight: 600; transition: 0.2s;
+    white-space: nowrap;
+  }
+  .modal-input-row button:hover { background: #dbb878; }
+  .modal-input-row button:disabled {
+    opacity: 0.4; cursor: not-allowed;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .nav-links {
+      position: fixed; top: 56px; left: 0; right: 0;
+      background: rgba(10,10,10,0.98); flex-direction: column;
+      padding: 20px 5%; gap: 16px; display: none;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-links.open { display: flex; }
+    .nav-toggle { display: flex; }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .section { padding: 60px 5%; }
+    .chat-fab { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== Navigation ========== -->
+<nav class="nav">
+  <div class="nav-logo">MISER<em>.</em></div>
+  <button class="nav-toggle" id="navToggle" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#gallery">客片</a></li>
+    <li><a href="#packages">套餐</a></li>
+    <li><a href="#notes">须知</a></li>
+    <li><a href="#" onclick="openChat()">咨询</a></li>
+  </ul>
+</nav>
+
+<!-- ========== Hero ========== -->
+<section class="hero">
+  <div class="hero-badge">CHANGSHA · 外景约拍</div>
+  <h1><strong>Miser</strong> 摄影师</h1>
+  <p>用镜头记录你在长沙街头的每一个自然瞬间。索尼 NEX5T 跟拍，专注外景人像。</p>
+  <div class="hero-gear">
+    <span>📷 索尼 NEX5T</span>
+    <span>📍 长沙市区</span>
+    <span>💡 自然光外景</span>
+  </div>
+  <button class="hero-cta" onclick="openChat()">立即咨询档期</button>
+  <div class="hero-scroll">
+    <span></span> 向下滚动
+  </div>
+</section>
+
+<!-- ========== Gallery ========== -->
+<section class="section gallery" id="gallery">
+  <div class="section-title">
+    <h2>客片展示</h2>
+    <p>Gallery</p>
+    <div class="line"></div>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <div class="placeholder"><div class="icon">🌿</div>客片 01</div>
+      <div class="label">街拍 · 五一广场</div>
+    </div>
+    <div class="gallery-item">
+      <div class="placeholder"><div class="icon">🍂</div>客片 02</div>
+      <div class="label">日系 · 烈士公园</div>
+    </div>
+    <div class="gallery-item">
+      <div class="placeholder"><div class="icon">🌇</div>客片 03</div>
+      <div class="label">夕阳 · 湘江边</div>
+    </div>
+    <div class="gallery-item">
+      <div class="placeholder"><div class="icon">🌸</div>客片 04</div>
+      <div class="label">清新 · 梅溪湖</div>
+    </div>
+    <div class="gallery-item">
+      <div class="placeholder"><div class="icon">☕</div>客片 05</div>
+      <div class="label">咖啡厅 · 苏家巷</div>
+    </div>
+    <div class="gallery-item">
+      <div class="placeholder"><div class="icon">🌆</div>客片 06</div>
+      <div class="label">夜景 · 万家丽</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Packages ========== -->
+<section class="section packages" id="packages">
+  <div class="section-title">
+    <h2>套餐详情</h2>
+    <p>Pricing</p>
+    <div class="line"></div>
+  </div>
+  <div class="packages-wrap">
+    <div class="package-card popular">
+      <div class="name">单人外景</div>
+      <div class="price">¥169 <small>/ 每次</small></div>
+      <div class="desc">长沙市区外景拍摄，适合个人写真</div>
+      <ul>
+        <li>底片全送（约 60–100 张）</li>
+        <li>精修 <strong class="highlight">9 张</strong></li>
+        <li>拍摄时长约 1.5 小时</li>
+        <li>电子版交付</li>
+      </ul>
+      <div class="notice">
+        ⚡ 预付 <strong>¥50</strong> 定金锁档期（可改期不可退）<br>
+        ✖ 不含妆造、服装<br>
+        📍 仅限长沙市区
+      </div>
+      <button class="btn-order" onclick="openChat()">立即咨询</button>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Notes ========== -->
+<section class="section notes" id="notes">
+  <div class="section-title">
+    <h2>拍摄须知</h2>
+    <p>Before You Shoot</p>
+    <div class="line"></div>
+  </div>
+  <div class="notes-grid">
+    <div class="notes-card">
+      <div class="num">01</div>
+      <h4>定金锁档</h4>
+      <p>确认档期需预付 ¥50 定金，定金可改期不可退。余款拍摄当日结清。</p>
+    </div>
+    <div class="notes-card">
+      <div class="num">02</div>
+      <h4>妆造服装</h4>
+      <p>本套餐不含妆造与服装，请自备。建议浅色系服装出片效果更佳。</p>
+    </div>
+    <div class="notes-card">
+      <div class="num">03</div>
+      <h4>拍摄流程</h4>
+      <p>沟通风格 → 确认日期 → 付定金 → 拍摄日集合 → 选片 → 7日内交付精修。</p>
+    </div>
+    <div class="notes-card">
+      <div class="num">04</div>
+      <h4>天气说明</h4>
+      <p>如遇恶劣天气可免费改期。小雨不影响拍摄，可自备透明伞出片。</p>
+    </div>
+    <div class="notes-card">
+      <div class="num">05</div>
+      <h4>交付标准</h4>
+      <p>底片网盘交付，精修通过微信发送。修图风格以日系清新、自然感为主。</p>
+    </div>
+    <div class="notes-card">
+      <div class="num">06</div>
+      <h4>版权说明</h4>
+      <p>摄影师拥有作品展示权。客片可作宣传展示，如有特殊要求请提前告知。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Footer ========== -->
+<footer class="footer">
+  <p>© 2026 Miser Photography · 长沙外景约拍 · 索尼 NEX5T</p>
+</footer>
+
+<!-- ========== Chat FAB ========== -->
+<button class="chat-fab" id="chatFab" onclick="openChat()" aria-label="在线咨询">
+  💬
+  <span class="badge">AI</span>
+</button>
+
+<!-- ========== Chat Modal ========== -->
+<div class="modal-overlay" id="chatOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Miser · 在线咨询
+        <small>Powered by DeepSeek AI</small>
+      </h3>
+      <button class="modal-close" onclick="closeChat()">✕</button>
+    </div>
+    <div class="modal-body" id="chatBody">
+      <div class="msg ai">
+        <div class="sender">🤖 Miser AI 助手</div>
+        Hi~ 我是摄影师 Miser 的 AI 助手 🙌<br><br>
+        目前套餐为 <strong>单人外景 ¥169</strong>（底片全送 + 精修 9 张，不含妆造服装，仅限长沙市区）。<br><br>
+        如需预约，请直接告诉我：<br>
+        ① 你的昵称<br>
+        ② 微信号<br>
+        ③ 拍摄日期<br>
+        ④ 喜欢的拍摄风格<br><br>
+        也可以点击下方按钮快速预约👇
+      </div>
+    </div>
+
+    <!-- Quick booking form (hidden by default, shown by button click or AI trigger) -->
+    <div style="display:none;" id="bookingFormWrap">
+      <div class="booking-form" id="bookingForm">
+        <div class="row">
+          <label>昵称</label>
+          <input type="text" id="bName" placeholder="怎么称呼你？" required>
+        </div>
+        <div class="row">
+          <label>微信号</label>
+          <input type="text" id="bWechat" placeholder="你的微信号" required>
+        </div>
+        <div class="row">
+          <label>拍摄日期</label>
+          <input type="date" id="bDate" required>
+        </div>
+        <div class="row">
+          <label>拍摄风格</label>
+          <select id="bStyle">
+            <option value="">请选择或自行输入</option>
+            <option value="日系清新">日系清新</option>
+            <option value="复古胶片">复古胶片</option>
+            <option value="街头随拍">街头随拍</option>
+            <option value="情绪氛围">情绪氛围</option>
+            <option value="韩系ins">韩系 ins 风</option>
+          </select>
+        </div>
+        <div class="submit-row">
+          <button class="btn-cancel" type="button" onclick="hideBookingForm()">取消</button>
+          <button class="btn-confirm" type="button" onclick="submitBooking()">提交预约</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-input-row">
+      <input type="text" id="chatInput" placeholder="输入消息..." autocomplete="off"
+             onkeydown="if(event.key==='ENTER'||event.key==='Enter')sendMessage()">
+      <button id="sendBtn" onclick="sendMessage()">发送</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  Configuration — 填入你的 DeepSeek API Key
+// ============================================================
+const DEEPSEEK_CONFIG = {
+  API_KEY:'sk-ddb08b18211441d7b48fa83a94d3d0cd',  // 从 localStorage 读取，或手动填入
+  API_URL: 'https://api.deepseek.com/v1/chat/completions',
+  MODEL: 'deepseek-chat',
+};
+
+// ============================================================
+//  State
+// ============================================================
+let messages = [];
+let isProcessing = false;
+
+// System Prompt — 严格按报价接单
+const SYSTEM_PROMPT = `你是摄影师 Miser 的 AI 预约助手。严格遵守以下规则：
+
+## 摄影师信息
+- 姓名：Miser
+- 器材：索尼 NEX5T
+- 地点：长沙市区外景约拍
+
+## 套餐（唯一可选）
+- 单人外景：169 元/次
+- 包含：底片全送（约 60-100 张）、精修 9 张、拍摄时长约 1.5 小时、电子版交付
+- 不含：妆造、服装
+- 定金：预付 50 元锁定档期（定金可改期不可退）
+- 范围：仅限长沙市区
+
+## 预约流程
+需要收集以下信息：
+1. 昵称
+2. 微信号
+3. 拍摄日期
+4. 拍摄风格（日系清新、复古胶片、街头随拍、情绪氛围、韩系 ins 风等）
+
+## 回复规范
+- 热情、自然，像摄影师本人一样交流
+- 严格按照以上报价，不得擅自降价或承诺额外服务
+- 当用户询问价格时，清晰报出 169 元的价格和包含内容
+- 当用户表达预约意向时，引导填写预约表单
+- 如果用户问到套餐外需求（如妆造、双人、商拍等），说明当前仅提供该套餐，可加微信详聊
+- 每次回复简洁明了，不要过长
+- 如果用户已在表单中填写信息，确认信息并引导付定金`;
+
+// ============================================================
+//  Navigation
+// ============================================================
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+
+navToggle.addEventListener('click', () => {
+  navToggle.classList.toggle('active');
+  navLinks.classList.toggle('open');
+});
+
+// Close nav on link click (mobile)
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navToggle.classList.remove('active');
+    navLinks.classList.remove('open');
+  });
+});
+
+// ============================================================
+//  Chat Modal
+// ============================================================
+const overlay = document.getElementById('chatOverlay');
+const chatBody = document.getElementById('chatBody');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const bookingFormWrap = document.getElementById('bookingFormWrap');
+
+function openChat() {
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => chatInput.focus(), 400);
+}
+
+function closeChat() {
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) closeChat();
+});
+
+// ============================================================
+//  Booking Form
+// ============================================================
+function showBookingForm() {
+  // Set min date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('bDate').setAttribute('min', today);
+  bookingFormWrap.style.display = 'block';
+  bookingFormWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideBookingForm() {
+  bookingFormWrap.style.display = 'none';
+}
+
+function submitBooking() {
+  const name = document.getElementById('bName').value.trim();
+  const wechat = document.getElementById('bWechat').value.trim();
+  const date = document.getElementById('bDate').value;
+  const style = document.getElementById('bStyle').value;
+
+  if (!name) return showToast('请输入昵称');
+  if (!wechat) return showToast('请输入微信号');
+  if (!date) return showToast('请选择拍摄日期');
+
+  const styleText = style || '待沟通';
+  const summary = `📋 预约信息确认：\n昵称：${name}\n微信：${wechat}\n拍摄日期：${date}\n拍摄风格：${styleText}\n套餐：单人外景 ¥169（定金 ¥50）\n\n请确认信息无误，支付定金后档期锁定！`;
+  addMessage(summary, 'user');
+  hideBookingForm();
+  // Reset form
+  document.getElementById('bName').value = '';
+  document.getElementById('bWechat').value = '';
+  document.getElementById('bDate').value = '';
+  document.getElementById('bStyle').value = '';
+
+  // AI reply
+  setTimeout(() => {
+    addMessage(`收到 ${name} 的预约！📸\n\n套餐：单人外景 ¥169\n定金：¥50\n日期：${date}\n风格：${styleText}\n\n请通过微信转账定金锁定档期，微信号可私信获取我的收款码。\n\n有任何问题随时问我~ 😊`, 'ai');
+  }, 600);
+}
+
+// ============================================================
+//  Toast
+// ============================================================
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)',
+    background: 'rgba(0,0,0,0.85)', color: '#fff', padding: '10px 24px',
+    borderRadius: '8px', fontSize: '0.8rem', zIndex: '999',
+    letterSpacing: '1px', backdropFilter: 'blur(4px)',
+  });
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2000);
+}
+
+// ============================================================
+//  Messages
+// ============================================================
+function addMessage(text, role) {
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  if (role === 'ai') {
+    div.innerHTML = `<div class="sender">🤖 Miser AI 助手</div>${text.replace(/\n/g, '<br>')}`;
+  } else {
+    div.textContent = text;
+  }
+  chatBody.appendChild(div);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  messages.push({ role, content: text });
+}
+
+function addTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.id = 'typingIndicator';
+  div.innerHTML = `<div class="sender">🤖 Miser AI 助手</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  chatBody.appendChild(div);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+// ============================================================
+//  DeepSeek API
+// ============================================================
+async function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text || isProcessing) return;
+
+  chatInput.value = '';
+  addMessage(text, 'user');
+  isProcessing = true;
+  sendBtn.disabled = true;
+  addTyping();
+
+  try {
+    // Check if API key is set
+    let apiKey = DEEPSEEK_CONFIG.API_KEY;
+    if (!apiKey) {
+      apiKey = localStorage.getItem('deepseek_api_key');
+      if (!apiKey) {
+        // Prompt user to enter API key
+        removeTyping();
+        addMessage('请先在页面右下方 → 点击 💬 旁白处或刷新后设置 API Key（联系管理员获取）。\n\n当前为演示模式，您可以继续浏览页面信息。', 'ai');
+        isProcessing = false;
+        sendBtn.disabled = false;
+        return;
+      }
+    }
+
+    const msgHistory = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...messages.slice(-20)  // last 20 messages for context
+    ];
+
+    const response = await fetch(DEEPSEEK_CONFIG.API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: DEEPSEEK_CONFIG.MODEL,
+        messages: msgHistory,
+        temperature: 0.7,
+        max_tokens: 1024,
+        stream: false,
+      }),
+    });
+
+    removeTyping();
+
+    if (!response.ok) {
+      const errData = await response.text();
+      console.error('DeepSeek API error:', response.status, errData);
+      addMessage(`抱歉，我暂时无法回复（错误 ${response.status}）。请稍后再试或直接联系摄影师微信。`, 'ai');
+      isProcessing = false;
+      sendBtn.disabled = false;
+      return;
+    }
+
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content || '抱歉，我现在无法回复，请稍后再试。';
+    addMessage(reply, 'ai');
+
+    // If user wants to book, show the form
+    const lower = text.toLowerCase();
+    if (lower.includes('预约') || lower.includes('预定') || lower.includes('订') || lower.includes('拍')) {
+      // Show booking form after a short delay
+      setTimeout(showBookingForm, 600);
+    }
+
+  } catch (err) {
+    removeTyping();
+    console.error('Chat error:', err);
+    addMessage('网络连接异常，请检查 API Key 是否配置正确，或直接联系摄影师微信。', 'ai');
+  }
+
+  isProcessing = false;
+  sendBtn.disabled = false;
+  chatInput.focus();
+}
+
+// ============================================================
+//  API Key setup helper (localStorage)
+// ============================================================
+// 用户可通过控制台设置：setApiKey('sk-xxx')
+function setApiKey(key) {
+  localStorage.setItem('deepseek_api_key', key);
+  DEEPSEEK_CONFIG.API_KEY = key;
+  console.log('✅ DeepSeek API Key 已保存');
+}
+
+// Expose for console
+window.setApiKey = setApiKey;
+
+// If key exists in localStorage, load it
+(function initKey() {
+  const saved = localStorage.getItem('deepseek_api_key');
+  if (saved) DEEPSEEK_CONFIG.API_KEY = saved;
+})();
+
+// ============================================================
+//  Set default date for booking
+// ============================================================
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('bDate').setAttribute('min', today);
+</script>
+</body>
+</html>
